@@ -1,60 +1,68 @@
-# ===========================================
-# STUDENT TODO: Complete this Docker Compose file
-# ===========================================
-#
-# Requirements:
-# 1. Frontend service:
-#    - Build from ./frontend directory
-#    - Expose port 3000
-#    - Should depend on backend
-#
-# 2. Backend service:
-#    - Build from ./backend directory
-#    - Expose port 8080
-#    - Must have environment variables for database connection
-#    - Should depend on postgres and wait for it to be healthy
-#    - Add a healthcheck
-#
-# 3. Postgres service:
-#    - Use postgres:15-alpine image
-#    - Set POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
-#    - Use a named volume for data persistence
-#    - Mount the init script from ./database/database.sql
-#    - Add a healthcheck
-#
-# 4. Define named volumes
-#
-# Hints:
-# - Research: "docker-compose healthcheck"
-# - Research: "docker-compose depends_on condition"
-# - Database env vars: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-#
-# Example healthcheck:
-#   healthcheck:
-#      test: ['CMD-SHELL', 'pg_isready -U postgres']
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-# ===========================================
-
-version: '3.8'
+# version: '3.8'
 
 services:
-  # STUDENT TODO: Define frontend service
-  frontend:
-    build: ./frontend
-    # TODO: Add ports, depends_on
-
-  # STUDENT TODO: Define backend service
-  backend:
-    build: ./backend
-    # TODO: Add ports, environment, depends_on, healthcheck
-
-  # STUDENT TODO: Define postgres service
+  # 1. DATABASE SERVICE
   postgres:
     image: postgres:15-alpine
-    # TODO: Add environment, ports, volumes, healthcheck
+    container_name: devops_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      # HOST_PORT:CONTAINER_PORT
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-# STUDENT TODO: Define named volumes
+  # 2. BACKEND SERVICE
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: devops_backend
+    ports:
+      - "8081:8080"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 3. FRONTEND SERVICE
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: devops_frontend
+    ports:
+      - "3001:3000"
+
+    # # OVERRIDE: Run the live development server instead of building static files
+    # command: npm start
+    # environment:
+    #   # Tells React to actively poll for file changes across the Docker boundary
+    #   - WATCHPACK_POLLING=true
+    #   - CHOKIDAR_USEPOLLING=true
+    # volumes:
+    #   # LIVE LINK: Maps your local frontend folder directly into the container
+    #   - ./frontend:/app
+    #   # SAFETY NET: Prevents your local machine from overwriting the container's installed packages
+    #   - /app/node_modules
+
+    depends_on:
+      - backend
+
+# Khai báo volume để dữ liệu database không bị mất khi tắt container
 volumes:
   postgres_data:

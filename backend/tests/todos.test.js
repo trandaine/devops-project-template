@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../server');
+const {app} = require('../server');
 
 describe('Todos API', () => {
    // Test 1: Health check
