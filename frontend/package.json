@@ -2,10 +2,12 @@
   "name": "devops-frontend",
   "version": "1.0.0",
   "scripts": {
+    "dev": "react-scripts start",
     "start": "serve -s build -l 3000",
     "build": "react-scripts build"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
