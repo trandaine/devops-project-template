@@ -47,19 +47,6 @@ services:
     container_name: devops_frontend
     ports:
       - "3001:3000"
-
-    # # OVERRIDE: Run the live development server instead of building static files
-    # command: npm start
-    # environment:
-    #   # Tells React to actively poll for file changes across the Docker boundary
-    #   - WATCHPACK_POLLING=true
-    #   - CHOKIDAR_USEPOLLING=true
-    # volumes:
-    #   # LIVE LINK: Maps your local frontend folder directly into the container
-    #   - ./frontend:/app
-    #   # SAFETY NET: Prevents your local machine from overwriting the container's installed packages
-    #   - /app/node_modules
-
     depends_on:
       - backend
 
