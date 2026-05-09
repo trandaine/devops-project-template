@@ -35,7 +35,13 @@ jobs:
         env:
           # psql automatically looks for this environment variable for the password
           PGPASSWORD: postgres 
-        run: psql -h localhost -U postgres -d tododb -f ./database/database.sql
+        run: |
+          until pg_isready -h 127.0.0.1 -p 5433 -U postgres; do
+            echo "Waiting for Postgres to open TCP connections..."
+            sleep 2
+          done
+          
+          psql -h 127.0.0.1 -p 5433 -U postgres -d tododb -f ./database/database.sql
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
