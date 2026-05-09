@@ -23,6 +23,7 @@ services:
 
   # 2. BACKEND SERVICE
   backend:
+    image: trandaine/devops-backend:latest
     build: 
       context: ./backend
       dockerfile: Dockerfile
@@ -41,6 +42,7 @@ services:
 
   # 3. FRONTEND SERVICE
   frontend:
+    image: trandaine/devops-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
