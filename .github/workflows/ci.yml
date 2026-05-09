@@ -92,3 +92,48 @@ jobs:
           context: ./frontend
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-frontend:latest
+
+
+# ---------------------------------------------------------
+  # JOB 3: DEPLOY TO VPS
+  # ---------------------------------------------------------
+  deploy:
+    name: Deploy to Production
+    needs: build-and-push # Ensures we only deploy IF the build was successful
+    runs-on: ubuntu-latest
+    
+    # Only deploy when pushing to the main branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. Securely copy the docker-compose.yml file to your VPS
+      - name: Copy docker-compose via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"
+          target: "~/devops-project"
+
+      # 2. SSH into the VPS and run Docker commands
+      - name: Execute Deployment Commands via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/devops-project-template
+            
+            # Pull the latest images from Docker Hub
+            docker compose pull
+            
+            # Restart the containers in the background with the new images
+            docker compose up -d
+            
+            # Clean up old, unused images to save disk space on your free tier VPS
+            docker image prune -af
