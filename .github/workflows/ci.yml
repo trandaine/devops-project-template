@@ -117,7 +117,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker-compose.yml"
-          target: "~/devops-project"
+          target: "~/var/wwwrootdev1/devops-project-daine"
 
       # 2. SSH into the VPS and run Docker commands
       - name: Execute Deployment Commands via SSH
@@ -127,7 +127,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/devops-project-daine
+            cd ~/var/wwwrootdev1/devops-project-daine
             
             # Pull the latest images from Docker Hub
             docker compose pull
