@@ -31,11 +31,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Initialize Database
+        env:
+          # psql automatically looks for this environment variable for the password
+          PGPASSWORD: postgres 
+        run: psql -h localhost -U postgres -d tododb -f ./database/database.sql
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: Install Dependencies
         run: cd backend && npm ci
