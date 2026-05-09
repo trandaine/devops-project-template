@@ -110,8 +110,8 @@ jobs:
         uses: actions/checkout@v4
 
       # 1. Securely copy the docker-compose.yml file to your VPS
-      - name: Copy docker-compose via SCP
-        uses: appleboy/scp-action@v0.1.7
+      - name: Copy docker-compose via SSH
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -121,7 +121,7 @@ jobs:
 
       # 2. SSH into the VPS and run Docker commands
       - name: Execute Deployment Commands via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
