@@ -7,14 +7,11 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # ---------------------------------------------------------
-  # JOB 1: TEST
-  # ---------------------------------------------------------
+  # TESTING BACKEND
   test:
     name: Run Backend Tests
     runs-on: ubuntu-latest
 
-    # This creates a temporary PostgreSQL database just for the tests
     services:
       postgres:
         image: postgres:14-alpine
@@ -52,9 +49,7 @@ jobs:
           DB_NAME: tododb
         run: cd backend && npm test
 
-  # ---------------------------------------------------------
-  # JOB 2: BUILD & PUSH DOCKER IMAGES
-  # ---------------------------------------------------------
+  # BUILD & PUSH DOCKER IMAGES
   build-and-push:
     name: Build and Push Images
     needs: test # This ensures tests MUST pass before building
