@@ -109,35 +109,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Securely copy the docker-compose.yml file to your VPS
-      - name: Copy docker-compose via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml"
-          target: "~/var/wwwrootdev1/devops-project-daine"
+      
 
       # 2. SSH into the VPS and run Docker commands
-      - name: Execute Deployment Commands via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy to sever via SSH
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo set -e 
-            
-            sudo mkdir -p ~/var/wwwrootdev1/devops-project-daine
-            cd ~/var/wwwrootdev1/devops-project-daine
-            
-            sudo echo "DB_USER=postgres" > .env
-            sudo echo "DB_PASSWORD=postgres" >> .env
-            sudo echo "DB_NAME=tododb" >> .env
-            
-            sudo docker compose pull
-            
-            sudo docker compose up -d
-            
-            sudo docker image prune -af
+            cd /var/wwwrootdev1/trandai-devops-project/devops-project-template
+
+            sudo git pull origin main
+
+            sudo docker-compose pull
+
+            sudo docker-compose up -d
