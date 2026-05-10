@@ -120,6 +120,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/wwwrootdev1/trandai-devops-project/devops-project-template
+            
+            sudo docker-compose down
 
             sudo git pull origin main
 
