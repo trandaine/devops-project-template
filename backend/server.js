@@ -3,18 +3,18 @@ const { Pool } = require('pg');
 const cors = require('cors');
 const helmet = require('helmet');
 
-// require('dotenv').config();
+require('dotenv').config();
 const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-   user: 'postgres',
-   host: 'devops_postgres',
-   database: 'tododb',
-   password: 'postgres',
-   port: 5432,
+   user: process.env.DB_USER || 'postgres',
+   host: process.env.DB_HOST || 'devops_postgres',
+   database: process.env.DB_NAME || 'tododb',
+   password: process.env.DB_PASSWORD || 'postgres',
+   port: process.env.DB_PORT || 5432,
 });
 
 app.get('/health', (req, res) => {
