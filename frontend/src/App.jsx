@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 // STUDENT TODO: This API_URL works for local development
 // For Docker, you may need to configure nginx proxy or use container networking
 
-const API_URL = 'http://localhost:8081';
+const API_URL = 'http://103.1.236.26:8081';
 
 function App() {
   const [todos, setTodos] = useState([]);
