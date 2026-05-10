@@ -4,7 +4,7 @@ services:
   # 1. DATABASE SERVICE
   postgres:
     image: postgres:15-alpine
-    container_name: todo_devops_postgres
+    container_name: devops_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
